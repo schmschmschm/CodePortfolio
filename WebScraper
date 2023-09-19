@@ -1,0 +1,62 @@
+import imp
+from os import link
+import selenium
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+import numpy as np
+import pandas as pd
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+#Replace with your PATH
+DRIVER_PATH = r"C:\Users\thoma\chromedriver\chromedriver.exe"
+driver = webdriver.Chrome( executable_path=DRIVER_PATH)
+#Replace with your chosen keyword
+#search_word='bygning'
+titles = []
+subheaders = []
+date = []
+URL= "https://ing.dk/nyheder"
+driver.get(URL)
+
+WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'coi-banner__accept')))
+driver.find_element(By.CLASS_NAME, 'coi-banner__accept').click()
+
+
+
+x = 7 #number of pages wished to scrape
+
+for i in range(x):
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'teaser--title')))
+    _list = driver.find_elements(By.CLASS_NAME, 'teaser--title') #Temp list - only used for t
+    
+  
+    
+    y = 0
+    for link in _list: #Iterate through the temp _list
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'teaser--title')))
+        linkname = driver.find_elements(By.CLASS_NAME, "teaser--title") #added this: new list so it creates a new tiempos-list for eachtime it goes back
+        link = linkname[y]
+        link.click()
+        try:
+            title = driver.find_element(By.CLASS_NAME,'node-article__title')
+            subtitle = driver.find_element(By.CLASS_NAME,'teaser')
+            published = driver.find_element(By.TAG_NAME,'time')
+
+            titles.append(title.text)
+            subheaders.append(subtitle.text)
+            date.append(published.text)
+        except:
+            pass
+        driver.back()
+        y = y+1
+
+    driver.find_element(By.XPATH, '//*[@id="main"]/div[3]/div[1]/div/div[2]/ul/li[8]/a').click()
+print('done')
+
+
+
+#driver.find_element(By.XPATH,'//*[@id="main"]/div[2]/div/div[1]/div[2]/div[2]/div[3]/a').click()
+
